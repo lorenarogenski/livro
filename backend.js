@@ -22,33 +22,34 @@ const modelo = (id) => {
     let novasVersoes = [];
 
     while(true) {
-        let livro = prompt(
+        let versao = prompt(
             "Ano do novo lançamento. (Caso não exista, digite 'fim')."
         );
 
-        if(livro === "fim") {
+        if(versao.toLowerCase() === "fim") {
             break;
         } else {
-            novasVersoes.push(livro);
+            novasVersoes.push(versao);
         }
     }
 
     if(titulo != "" && autor != "" && !isNaN(ano) && genero != "" && novasVersoes.length > 0) {
         if(id === undefined) {
             return {
+                id: countId++,
                 titulo,
                 autor,
                 ano,
                 genero,
-                id: countId++,
+                novasVersoes,
             };
         } else {
             return {
+                id,
                 titulo,
                 autor,
                 ano,
                 genero,
-                id,
             };
         }
     } else {
@@ -61,7 +62,6 @@ const modelo = (id) => {
 
 const adicionarLivro = () => {
     let livro = modelo();
-
     if(livro !== undefined) {
         livros.push(livro);
         console.log("Livro adicionado com sucesso! ");
@@ -83,9 +83,12 @@ const listarLivros = () => {
             Gênero: ${livro.genero}.`
             );
 
-            livro.novasVersoes.forEach((livro, indice) => {
-                console.log(`Nova versão: ${indice + 1} : ${livro}`);
+            if(livro.novasVersoes.length > 0) {
+                livros.novasVersoes.forEach((versao, indice) => {
+                    console.log(`
+                    Nova Versão ${indice + 1}: ${versao}`);
             });
+        }
         });
         return true;
     }
@@ -94,12 +97,10 @@ const listarLivros = () => {
 const atualizarLivro = () => {
     if(listarLivros()) {
         const id = parseInt(prompt("Qual ID deseja editar: "));
-
-        let indice = livros.findIndex((livro) => id === livro.id);
+        let indice = getIndice(id);
 
         if(indice !== -1) {
             let livroAtualizado = modelo(id);
-
             if(livroAtualizado !== undefined) {
                 livros[indice] = livroAtualizado;
                 console.log("Livro atualizado! ")
@@ -113,13 +114,14 @@ const atualizarLivro = () => {
 const deletarLivro = () => {
     if(listarLivros()) {
         const id = parseInt(prompt("Qual ID deseja remover: "));
+        const indice = getIndice(id);
 
-        const indice = livros.findIndex((livro) => id === livro.id);
-
-        if(indice !== -1);
-        console.log("Livro removido. ");
-    } else {
-        console.log("ID inexistente. ")
+        if(indice !== -1) {
+            livros.splice(indice, 1);
+            console.log("Livro removido. ");
+        } else {
+            console.log("ID inexistente. ")
+        }
     }
 };
 
